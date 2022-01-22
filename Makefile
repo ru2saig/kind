@@ -1,4 +1,6 @@
+CFLAGS = -std=c99 -pedantic -Wall -Wno-deprecated-declarations
+
 kind: main.c
-	$(CC) $< -g3 --std=c99 -pedantic -Wall -o $@ -lX11 -lXi `pkg-config --cflags gtk+-3.0`
+	$(CC) $(CFLAGS) `pkg-config --cflags gtk+-3.0` $<  -o $@ -lX11 -lXi `pkg-config --libs gtk+-3.0`
 clean:
 	rm -f kind

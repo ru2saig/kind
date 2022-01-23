@@ -66,7 +66,8 @@ int main(int argc, char **argv)
       if(status != old_status) {
 	if(status & CAPS_LOCK_MASK) {
 	  gtk_status_icon_set_from_pixbuf(caps_lock, caps_lock_on);
-	  fprintf(stderr, "Caps Lock is ON\n");
+	  // put an #IF debug around these?
+          fprintf(stderr, "Caps Lock is ON\n");
 	} else {
 	  gtk_status_icon_set_from_pixbuf(caps_lock, caps_lock_off);
 	  fprintf(stderr, "Caps Lock is OFF\n");

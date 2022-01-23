@@ -16,23 +16,29 @@ void usage()
   exit(1);
 }
 
-
-#define ICON_PATH_ON "/home/ruusaig/Projects/kind/test.svg"
-#define ICON_PATH_OFF "/home/ruusaig/Projects/kind/default16.png"
+#define CAPS_ICON_PATH_ON "/home/ruusaig/Projects/kind/icons/caps_on.svg" // TODO: change these to a compile time variables, which are subsituted during install/make?
+#define CAPS_ICON_PATH_OFF "/home/ruusaig/Projects/kind/icons/caps_off.svg" // TODO: change these to a compile time variables, which are subsituted during install/make?
+#define NUMS_ICON_PATH_ON "/home/ruusaig/Projects/kind/icons/nums_on.svg" // or see if gtk provides a way to find them?
+#define NUMS_ICON_PATH_OFF "/home/ruusaig/Projects/kind/icons/nums_off.svg" // or see if gtk provides a way to find them?
+#define SCRL_ICON_PATH_ON "/home/ruusaig/Projects/kind/icons/scroll_on.svg"
+#define SCRL_ICON_PATH_OFF "/home/ruusaig/Projects/kind/icons/scroll_off.svg"
 
 int main(int argc, char **argv)
 {
   unsigned int status = 0;
   Display *disp = XOpenDisplay(DEFAULT_DISPLAY); // TODO: add option for user to change disps. how would that work?
-  GdkPixbuf *caps_lock_on, *caps_lock_off, *nums_lock_on, *nums_lock_off; // TODO: make an array for each key?
+  GdkPixbuf *caps_lock_on, *caps_lock_off, *nums_lock_on, *nums_lock_off, *scroll_lock_on, *scroll_lock_off; // TODO: make an array for each key?
   GtkStatusIcon *caps_lock, *nums_lock;
   
   gtk_init(&argc, &argv);
 
-  caps_lock_on = gdk_pixbuf_new_from_file(ICON_PATH_ON, NULL);
-  caps_lock_off = gdk_pixbuf_new_from_file(ICON_PATH_OFF, NULL);
-  nums_lock_on = gdk_pixbuf_new_from_file(ICON_PATH_ON, NULL);
-  nums_lock_off = gdk_pixbuf_new_from_file(ICON_PATH_OFF, NULL);
+  // conditional inclusion? with the command line options passed!
+  caps_lock_on = gdk_pixbuf_new_from_file(CAPS_ICON_PATH_ON, NULL); // perhaps use the gerror feature?
+  caps_lock_off = gdk_pixbuf_new_from_file(CAPS_ICON_PATH_OFF, NULL);
+  nums_lock_on = gdk_pixbuf_new_from_file(NUMS_ICON_PATH_ON, NULL);
+  nums_lock_off = gdk_pixbuf_new_from_file(NUMS_ICON_PATH_OFF, NULL);
+  scroll_lock_on = gdk_pixbuf_new_from_file(SCRL_ICON_PATH_ON, NULL);
+  scroll_lock_off = gdk_pixbuf_new_from_file(SCRL_ICON_PATH_OFF, NULL);
   
   //gtk_status_icon_set_name (status_icon1, "kindpackage"); // what do these do?
   //gtk_status_icon_set_title (status_icon1, "kind");
@@ -43,29 +49,12 @@ int main(int argc, char **argv)
   gtk_status_icon_set_tooltip_text(nums_lock, "Num Lock");
   gtk_status_icon_set_visible(nums_lock, True);
 
-  // then this. maybe add patches for this ordering?
+  // then this. maybe add patches for this ordering? since command line gets iccky! or an array? a struct?
   caps_lock = gtk_status_icon_new();
   gtk_status_icon_set_tooltip_text (caps_lock, "Caps Lock");
   gtk_status_icon_set_visible(caps_lock, True);
   
-  // nothing at all is 0.0%. very nice (as in no icon)
-  // I wonder if, only changing the icon when the status has changed will reduce the load? would that cause a CPU spike? only way to know is to test
-  /*      // don't really like the following code. refactor after figuring out how to display the icons!
-	  // this implementation takes around 0.7% when switching rapidly enough. takes 1.3% at the most, I've tested
-	  if(status != old_status) {
-	if(status & CAPS_LOCK_MASK) {
-	  gtk_status_icon_set_from_pixbuf(caps_lock, caps_lock_on);
-	  fprintf(stderr, "Caps Lock is ON\n");
-	} else {
-	  gtk_status_icon_set_from_pixbuf(caps_lock, caps_lock_off);
-	  fprintf(stderr, "Caps Lock is OFF\n");
-	}
-
-	old_status = status;
-      }
-   */
-
-  
+  // using a single status variable consumes cpu upto 2.2% with rapid tapping. Maybe a status per indicator will reduce this?
   int old_status = -1; // this makes the loop run at least once
   
   while(1)

@@ -65,8 +65,8 @@ void tray_icons_init()
 
   scroll_lock = gtk_status_icon_new();
   gtk_status_icon_set_tooltip_text (scroll_lock, "Scroll Lock");
-  // gtk_status_icon_set_name(scroll_lock, "kind-scroll-lock");
-  //gtk_status_icon_set_title(scroll_lock, "kind-scroll-lock");
+  gtk_status_icon_set_name(scroll_lock, "kind-scroll-lock");
+  gtk_status_icon_set_title(scroll_lock, "kind-scroll-lock");
   gtk_status_icon_set_visible(scroll_lock, 1);
   #endif
 
@@ -76,8 +76,8 @@ void tray_icons_init()
   
   num_lock = gtk_status_icon_new();
   gtk_status_icon_set_tooltip_text(num_lock, "Num Lock");
-  //gtk_status_icon_set_name(num_lock, "kind-num-lock");
-  //gtk_status_icon_set_title(num_lock, "kind-num-lock");
+  gtk_status_icon_set_name(num_lock, "kind-num-lock");
+  gtk_status_icon_set_title(num_lock, "kind-num-lock");
   gtk_status_icon_set_visible(num_lock, 1);
   #endif 
 
@@ -87,8 +87,8 @@ void tray_icons_init()
 
   caps_lock = gtk_status_icon_new();
   gtk_status_icon_set_tooltip_text (caps_lock, "Caps Lock");
-  //  gtk_status_icon_set_name(caps_lock, "kind-caps-lock");
-  //gtk_status_icon_set_title(caps_lock, "kind-caps-lock");
+  gtk_status_icon_set_name(caps_lock, "kind-caps-lock");
+  gtk_status_icon_set_title(caps_lock, "kind-caps-lock");
   gtk_status_icon_set_visible(caps_lock, 1);
   #endif
 }

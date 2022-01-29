@@ -1,0 +1,13 @@
+[Unit]
+Description=Kind - keyboard indicator for your systray
+Documentation=TODO
+
+[Service]
+Type=forking
+PIDFile=/tmp/kind.lock
+ExecStart=kind
+ExecStop=kind --quit
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

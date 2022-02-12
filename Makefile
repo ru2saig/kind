@@ -7,7 +7,7 @@ all: kind
 util.o: util.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-trayicons.o: trayicons.c config.h
+trayicons.o: trayicons.c
 	$(CC) $(CFLAGS) `pkg-config --cflags gtk+-3.0` -c $<  -o $@ `pkg-config --libs gtk+-3.0`
 
 kind: kind.c trayicons.o util.o

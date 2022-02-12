@@ -28,6 +28,7 @@ int main(int argc, char **argv)
       
     }
 
+  
   daemonize(); // daemonize the process
   
   disp = XOpenDisplay(DEFAULT_DISPLAY); // TODO: add option for user to change disps. how would that work?

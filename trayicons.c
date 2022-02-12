@@ -2,117 +2,76 @@
 #include "trayicons.h"
 #include "config.h"
 
-// don't really like the following code. refactor after figuring out how to display the icons!
-// refactor this in structs? this seems so oop!
-#ifdef CAPS_LOCK
-#define CAPS_ICON_PATH_ON "caps_on.svg" // TODO: change these to a compile time variables, which are subsituted during install/make?
-#define CAPS_ICON_PATH_OFF "caps_off.svg" // TODO: change these to a compile time variables, which are subsituted during install/make?
+// TODO: figure out what to do when malloc fails.
+// the exiting and cleanup procedure, what to do?
+// TODO: figure out how to make it more ooc!
 
-static GtkStatusIcon *caps_lock;
-static GdkPixbuf *caps_lock_on, *caps_lock_off;
+static KBDStatusIcon caps_lock;
+static KBDStatusIcon num_lock;
+static KBDStatusIcon scroll_lock;
 
-void toggle_caps_lock(int status)
+void toggle_scroll_lock(int state) { toggle_state(&scroll_lock, state); }
+void toggle_num_lock(int state) { toggle_state(&num_lock, state); }
+void toggle_caps_lock(int state) { toggle_state(&caps_lock, state); }
+
+
+void toggle_state(KBDStatusIcon *status_icon, int state)
 {
-  if(status) {
-    gtk_status_icon_set_from_pixbuf(caps_lock, caps_lock_on);
-  } else {
-    gtk_status_icon_set_from_pixbuf(caps_lock, caps_lock_off);
-  }
+  if(state)
+    gtk_status_icon_set_from_pixbuf(status_icon->icon, status_icon->icon_on);   
+  else
+    gtk_status_icon_set_from_pixbuf(status_icon->icon, status_icon->icon_off);
 }
-#endif
 
-#ifdef NUM_LOCK
-#define NUM_ICON_PATH_ON "num_on.svg" // or see if gtk provides a way to find them?
-#define NUM_ICON_PATH_OFF "num_off.svg" // or see if gtk provides a way to find them?
 
-static GtkStatusIcon *num_lock;
-static GdkPixbuf *num_lock_on, *num_lock_off;
-
-void toggle_num_lock(int status)
+void init_icon(KBDStatusIcon* status_icon, GdkPixbuf* status_icon_on, GdkPixbuf* status_icon_off, const char* tooltip_text, const char* icon_name)
 {
-  if(status) {
-    gtk_status_icon_set_from_pixbuf(num_lock, num_lock_on);
-  } else {
-    gtk_status_icon_set_from_pixbuf(num_lock, num_lock_off);
-  }
+  //TODO: better error checking for all of it! and handling!
+  status_icon->icon_on = status_icon_on;
+  status_icon->icon_off = status_icon_off;
+
+  status_icon->icon = gtk_status_icon_new();
+  gtk_status_icon_set_tooltip_text(status_icon->icon, icon_name);
+  gtk_status_icon_set_name(status_icon->icon, tooltip_text);
+  gtk_status_icon_set_title(status_icon->icon, tooltip_text);
+  gtk_status_icon_set_visible(status_icon->icon, 1);
+
 }
 
-#endif
 
-#ifdef SCROLL_LOCK
-#define SCROLL_ICON_PATH_ON "scroll_on.svg"
-#define SCROLL_ICON_PATH_OFF "scroll_off.svg"
-
-static GtkStatusIcon *scroll_lock;
-static GdkPixbuf *scroll_lock_on, *scroll_lock_off;
-
-void toggle_scroll_lock(int status) {
-  if(status) {
-    gtk_status_icon_set_from_pixbuf(scroll_lock, scroll_lock_on);
-  } else {
-    gtk_status_icon_set_from_pixbuf(scroll_lock, scroll_lock_off);
-  }
+void free_icon(KBDStatusIcon* status_icon)
+{  
+  g_object_unref(status_icon->icon);
+  g_object_unref(status_icon->icon_on);
+  g_object_unref(status_icon->icon_off);
 }
-#endif
-
+    
 void tray_icons_init()
 {
-  // the ordering in which the icons are created seems to order the icons in the systray. wonder if that can be made more to my control?
-  #ifdef SCROLL_LOCK
-  scroll_lock_on = gdk_pixbuf_new_from_file(ICON_PREFIX SCROLL_ICON_PATH_ON, NULL);
-  scroll_lock_off = gdk_pixbuf_new_from_file(ICON_PREFIX SCROLL_ICON_PATH_OFF, NULL);
 
-  scroll_lock = gtk_status_icon_new();
-  gtk_status_icon_set_tooltip_text(scroll_lock, "Scroll Lock");
-  gtk_status_icon_set_name(scroll_lock, "kind-scroll-lock");
-  gtk_status_icon_set_title(scroll_lock, "kind-scroll-lock");
-  gtk_status_icon_set_visible(scroll_lock, 1);
-  #endif
+  // the ordering in which the icons are created seems to order the icons in the systray. wonder if that can be made more to my control?  
+  init_icon(&scroll_lock,
+            gdk_pixbuf_new_from_file(ICON_PREFIX SCROLL_ICON_PATH_ON, NULL),
+            gdk_pixbuf_new_from_file(ICON_PREFIX SCROLL_ICON_PATH_OFF, NULL),
+            "Scroll Lock", "kind-scroll-lock");
 
-  #ifdef NUM_LOCK
-  num_lock_on = gdk_pixbuf_new_from_file(ICON_PREFIX NUM_ICON_PATH_ON, NULL);
-  num_lock_off = gdk_pixbuf_new_from_file(ICON_PREFIX NUM_ICON_PATH_OFF, NULL);
+
+  init_icon(&num_lock,
+            gdk_pixbuf_new_from_file(ICON_PREFIX NUM_ICON_PATH_ON, NULL),
+            gdk_pixbuf_new_from_file(ICON_PREFIX NUM_ICON_PATH_OFF, NULL),
+            "Num Lock", "kind-num-lock");
+
+
+  init_icon(&caps_lock,
+            gdk_pixbuf_new_from_file(ICON_PREFIX CAPS_ICON_PATH_ON, NULL),
+            gdk_pixbuf_new_from_file(ICON_PREFIX CAPS_ICON_PATH_OFF, NULL),
+            "Caps Lock", "kind-caps-lock");
   
-  num_lock = gtk_status_icon_new();
-  gtk_status_icon_set_tooltip_text(num_lock, "Num Lock");
-  gtk_status_icon_set_name(num_lock, "kind-num-lock");
-  gtk_status_icon_set_title(num_lock, "kind-num-lock");
-  gtk_status_icon_set_visible(num_lock, 1);
-  #endif 
-
-  #ifdef CAPS_LOCK
-  caps_lock_on = gdk_pixbuf_new_from_file(ICON_PREFIX CAPS_ICON_PATH_ON, NULL); // perhaps use the gerror feature?
-  caps_lock_off = gdk_pixbuf_new_from_file(ICON_PREFIX CAPS_ICON_PATH_OFF, NULL);
-
-  caps_lock = gtk_status_icon_new();
-  gtk_status_icon_set_tooltip_text (caps_lock, "Caps Lock");
-  gtk_status_icon_set_name(caps_lock, "kind-caps-lock");
-  gtk_status_icon_set_title(caps_lock, "kind-caps-lock");
-  gtk_status_icon_set_visible(caps_lock, 1);
-  #endif
 }
 
 void tray_icons_free()
 {
-
-  #ifdef CAPS_LOCK
-  g_object_unref(caps_lock);
-  g_object_unref(caps_lock_on);
-  g_object_unref(caps_lock_off);
-  #endif
-
-  #ifdef NUM_LOCK
-  g_object_unref(num_lock);
-  g_object_unref(num_lock_on);
-  g_object_unref(num_lock_off);
-  #endif
-
-  #ifdef SCROLL_LOCK
-  g_object_unref(scroll_lock);
-  g_object_unref(scroll_lock_on);
-  g_object_unref(scroll_lock_off);
-  #endif
-  
+  free_icon(&scroll_lock);
+  free_icon(&num_lock);
+  free_icon(&caps_lock);
 }
-
- 

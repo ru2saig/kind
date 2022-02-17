@@ -1,6 +1,10 @@
 # Kind
-Keyboard indicators for your system tray. Works on X11 based systems (for now)
-Tested with xfce4-panel 4.16.3.
+Keyboard indicators for your system tray on X11 (for now). This is aimed at laptops and for machines that have a keyboard without keyboard indicator lights.  
+Looks kinda like this:  
+![image](https://user-images.githubusercontent.com/42857541/154541828-281a466f-1a40-4b89-8f43-8a9c41f35708.png)  
+
+
+Tested on xfce4-panel 4.16.3.  
 
 ## Requirements
 - C compiler (c99 support)
@@ -22,7 +26,7 @@ If root user permissions are required, and you've got sudo installed:
 ```sudo make install```
 
 If using systemd, use ```make install-systemd``` to install and enable the service file.
-The service file starts up kind after graphical session is reached, and makes (heh) sure kind is stopped.
+The service file starts up kind after graphical session is reached, and makes sure kind is stopped.
 
 ## Running
 Recommended to use systemd service file, but if you still insist, put ```kind &``` into the autostart file, or

@@ -23,3 +23,4 @@ install:
 
 install-systemd: # moves a service file over. Check if a valid directory for this, first?
 	cp kind.service /usr/lib/systemd/user/
+	systemctl --user enable --now kind.service

@@ -11,11 +11,12 @@ Tested on xfce4-panel 4.16.3.
 - Make
 - XLib development headers
 - Gtk3 development headers
+- git
 
 
 Get all the required packages command for Debian based systems with this nifty command:
 ```
-sudo apt install libx11-dev libgtk-3-dev build-essential
+sudo apt install libx11-dev libgtk-3-dev build-essential git
 ```
 
 ## Building and Installation

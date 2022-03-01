@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c99 -pedantic -Wall -Wno-deprecated-declarations
+CFLAGS = -std=c99 -O2 -pedantic -Wall -Wno-deprecated-declarations
 
 all: kind
 
